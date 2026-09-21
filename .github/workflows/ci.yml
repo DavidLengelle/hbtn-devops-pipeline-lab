@@ -28,6 +28,9 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: postgres://pipeline:pipeline@localhost:5432/pipeline
+
     services:
       postgres:
         image: postgres:16-alpine
