@@ -1,0 +1,52 @@
+# Local stack for the lab: the API and its Postgres database.
+#
+# Everything runs in containers — you do not need Node or npm on your machine.
+#
+#   docker compose up -d                              start the stack
+#   docker compose ps                                 check both services
+#   docker compose run --rm app npm run test:unit     8 unit tests, no database
+#   docker compose run --rm app npm run test:integration   3 integration tests
+#   docker compose run --rm app npm test              the full suite, 11 tests
+#   curl -s http://localhost:3000/health              {"status":"ok"}
+#   docker compose down -v                            stop and drop the volumes
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: pipeline
+      POSTGRES_PASSWORD: pipeline
+      POSTGRES_DB: pipeline
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pipeline -d pipeline"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      # The builder stage carries the dev dependencies, so the test suite runs
+      # here. The runtime stage is what the pipeline builds and ships.
+      target: builder
+    command: ["node", "src/server.js"]
+    environment:
+      NODE_ENV: development
+      PORT: "3000"
+      DATABASE_URL: postgres://pipeline:pipeline@db:5432/pipeline
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      # Your checkout, so an edit is visible without a rebuild. The second entry
+      # keeps the container's own node_modules instead of hiding it behind the
+      # (empty) host directory.
+      - ./:/app
+      - /app/node_modules
+
+volumes:
+  db-data:

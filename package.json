@@ -1,0 +1,29 @@
+{
+  "name": "hbtn-devops-pipeline-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tested Express and PostgreSQL API for the CI/CD Pipeline Essentials lab.",
+  "license": "MIT",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "migrate": "node src/db/migrate.js",
+    "test": "jest --runInBand",
+    "test:unit": "jest --runInBand tests/unit",
+    "test:integration": "jest --runInBand tests/integration",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "express": "4.22.2",
+    "pg": "8.22.0"
+  },
+  "devDependencies": {
+    "eslint": "8.57.1",
+    "jest": "30.4.2",
+    "jest-junit": "17.0.0",
+    "supertest": "7.2.2"
+  }
+}

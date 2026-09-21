@@ -1,0 +1,62 @@
+# ---------------------------------------------------------------------------
+# Continuous integration for hbtn-devops-pipeline-lab.
+#
+# HEADS UP: this workflow is DELIBERATELY BROKEN. It ships with three separate
+# faults of three different kinds, and repairing them one commit at a time is
+# the pipeline-repair task.
+#
+# Read the run logs in the Actions tab and let them tell you where to look. Do
+# not rewrite the file from scratch: the exercise is the diagnosis, not the
+# typing. Each fault has its own signature, and fixing one only gets you as far
+# as the next.
+# ---------------------------------------------------------------------------
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: pipeline
+          POSTGRES_PASSWORD: pipeline
+          POSTGRES_DB: pipeline
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U pipeline -d pipeline"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+     steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install-deps
+
+      - name: Run the unit tests
+        run: npm run test:unit
+
+      - name: Run the integration tests
+        run: npm run test:integration
