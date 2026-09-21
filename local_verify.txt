@@ -1,0 +1,34 @@
+== UNIT ==
+ Container hbtn-devops-pipeline-lab-db-1 Healthy 
+ Container hbtn-devops-pipeline-lab-app-run-59ea4910f88f Creating 
+ Container hbtn-devops-pipeline-lab-app-run-59ea4910f88f Created 
+
+> hbtn-devops-pipeline-lab@1.0.0 test:unit
+> jest --runInBand tests/unit
+
+PASS tests/unit/items.unit.test.js
+PASS tests/unit/health.test.js
+
+Test Suites: 2 passed, 2 total
+Tests:       8 passed, 8 total
+Snapshots:   0 total
+Time:        0.394 s
+Ran all test suites matching tests/unit.
+== INTEGRATION ==
+ Container hbtn-devops-pipeline-lab-db-1 Waiting 
+ Container hbtn-devops-pipeline-lab-db-1 Healthy 
+ Container hbtn-devops-pipeline-lab-app-run-39f494ef8217 Creating 
+ Container hbtn-devops-pipeline-lab-app-run-39f494ef8217 Created 
+
+> hbtn-devops-pipeline-lab@1.0.0 test:integration
+> jest --runInBand tests/integration
+
+PASS tests/integration/items.int.test.js
+
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        0.419 s
+Ran all test suites matching tests/integration.
+== HEALTH ==
+{"status":"ok"}
