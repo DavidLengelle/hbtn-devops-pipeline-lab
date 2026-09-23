@@ -104,10 +104,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Compute lowercase image name
+      - name: Compute lowercase image tags
         env:
-          REPO: ${{ github.repository }}
-        run: echo "IMAGE=ghcr.io/${REPO,,}" >> "$GITHUB_ENV"
+          SHA_TAG: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          LATEST_TAG: ghcr.io/${{ github.repository }}:latest
+        run: |
+          echo "SHA_TAG=${SHA_TAG,,}" >> "$GITHUB_ENV"
+          echo "LATEST_TAG=${LATEST_TAG,,}" >> "$GITHUB_ENV"
 
       - name: Build and push image
         uses: docker/build-push-action@v7
@@ -116,7 +119,7 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ env.IMAGE }}:${{ github.sha }}
-            ${{ env.IMAGE }}:latest
+            ${{ env.SHA_TAG }}
+            ${{ env.LATEST_TAG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
